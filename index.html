@@ -3,96 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurispruve | Evidence Integrity Portal</title>
-    
+    <title>Jurispruve | Evidence Intake</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <style>
-        :root {
-            --bg: #0a0c10;
-            --card: #161b22;
-            --text: #ffffff;
-            --dim: #8b949e;
-            --accent: #00ff88;
-            --border: #30363d;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        #jurispruve-box {
-            background: var(--card);
-            padding: 40px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        h2 { margin-top: 0; font-weight: 600; }
-        p { color: var(--dim); font-size: 0.9rem; line-height: 1.5; }
-        
-        input[type="file"] {
-            margin: 20px 0;
-            color: var(--dim);
-        }
-
-        #status {
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            color: var(--accent);
-            min-height: 1.2em;
-        }
-
-        #result { margin-top: 20px; }
-
-        .btn-download {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 15px;
-            transition: opacity 0.2s;
-        }
-        
-        .btn-download:hover { opacity: 0.9; }
+        body { background-color: #0d1117; color: white; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        #app { width: 400px; text-align: center; }
+        #drop-zone { border: 2px dashed #30363d; padding: 40px; border-radius: 12px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-download { background: #00ff88; color: black; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; }
     </style>
 </head>
 <body>
+    <div id="app">
+        <h1>Jurispruve</h1>
+        <p style="color: #8b949e;">Rule 901(c) Integrity Protocol</p>
 
-  <div id="app">
-    <h1>Jurispruve <span style="color: #00ff88;">Integrity Protocol</span></h1>
-    <p>Rule 901(c) Compliant Digital Evidence Ingestion</p>
+        <div id="drop-zone">
+            <p id="drop-text">Drag evidence here or <br><strong>click to browse</strong></p>
+            <input type="file" id="evidenceInput" style="display: none;">
+        </div>
 
-    <div id="drop-zone" style="border: 2px dashed #30363d; padding: 40px; border-radius: 12px; cursor: pointer; transition: 0.3s;">
-        <p id="drop-text">Drag evidence here or <strong>click to browse</strong></p>
-        <input type="file" id="evidenceInput" style="display: none;">
-    </div>
-
-    <div id="status" style="margin-top: 20px; color: #8b949e;">Ready for intake...</div>
-    <div id="result"></div>
-</div>
-        
-        <input type="file" id="evidenceInput">
-        
-        <div id="status"></div>
+        <div id="status" style="margin-top: 20px; color: #8b949e;">System Ready</div>
         <div id="result"></div>
     </div>
-
     <script src="app.js"></script>
-
 </body>
 </html>
