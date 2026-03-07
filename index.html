@@ -73,9 +73,18 @@
 </head>
 <body>
 
-    <div id="jurispruve-box">
-        <h2>Evidence Intake</h2>
-        <p>Upload files to generate cryptographic fingerprints and <strong>Rule 901(c)</strong> admissibility reports.</p>
+  <div id="app">
+    <h1>Jurispruve <span style="color: #00ff88;">Integrity Protocol</span></h1>
+    <p>Rule 901(c) Compliant Digital Evidence Ingestion</p>
+
+    <div id="drop-zone" style="border: 2px dashed #30363d; padding: 40px; border-radius: 12px; cursor: pointer; transition: 0.3s;">
+        <p id="drop-text">Drag evidence here or <strong>click to browse</strong></p>
+        <input type="file" id="evidenceInput" style="display: none;">
+    </div>
+
+    <div id="status" style="margin-top: 20px; color: #8b949e;">Ready for intake...</div>
+    <div id="result"></div>
+</div>
         
         <input type="file" id="evidenceInput">
         
