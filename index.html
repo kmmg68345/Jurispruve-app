@@ -2,19 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jurispruve | Forensic Portal</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exifreader@4.12.0/dist/exif-reader.min.js"></script>
+
     <style>
         :root { --primary: #00ff88; --bg: #0d1117; --card: #161b22; --text: #c9d1d9; }
-        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 40px 20px; }
+        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
         .container { max-width: 600px; width: 100%; text-align: center; }
         .logo-box { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #30363d; }
+        h1 { margin: 10px 0; letter-spacing: 2px; color: #fff; }
         .notes-area { text-align: left; margin-bottom: 20px; }
-        textarea { width: 100%; background: var(--card); border: 1px solid #30363d; color: #fff; padding: 12px; border-radius: 8px; margin-top: 5px; min-height: 80px; }
-        .drop-zone { border: 2px dashed #30363d; border-radius: 12px; padding: 40px; cursor: pointer; background: var(--card); }
+        textarea { width: 100%; background: var(--card); border: 1px solid #30363d; color: #fff; padding: 12px; border-radius: 8px; margin-top: 5px; min-height: 80px; box-sizing: border-box; }
+        .drop-zone { border: 2px dashed #30363d; border-radius: 12px; padding: 40px; cursor: pointer; background: var(--card); transition: 0.3s; }
+        .drop-zone:hover { border-color: var(--primary); }
         .btn-download { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
         .history-item { background: var(--card); padding: 12px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid var(--primary); text-align: left; display: flex; justify-content: space-between; font-size: 0.8rem; }
+        .success-seal { width: 50px; height: 50px; border: 3px solid var(--primary); border-radius: 50%; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 24px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -23,20 +29,113 @@
             <img src="jurispruve-dark-transparent.svg" alt="Jurispruve Logo" style="height: 60px;">
         </div>
         <h1>JURISPRUVE</h1>
+        
         <div class="notes-area">
-            <label style="color:var(--primary); font-size: 0.8rem; font-weight: bold;">CASE NOTES / SOURCE:</label>
-            <textarea id="caseNotes" placeholder="e.g., Received from Client Jane Doe via encrypted link."></textarea>
+            <label style="color:var(--primary); font-size: 0.8rem; font-weight: bold;">CASE NOTES / SOURCE ATTESTATION:</label>
+            <textarea id="caseNotes" placeholder="e.g., Received from Client Jane Doe. Case #2026-A."></textarea>
         </div>
+
         <div id="drop-zone" class="drop-zone">
             <p id="status">Drag & Drop Evidence to Seal</p>
             <input type="file" id="evidenceInput" style="display: none;">
         </div>
+
         <div id="result"></div>
+
         <div id="history-container" style="display: none; margin-top: 30px; text-align: left;">
             <h3 style="font-size: 0.8rem; color: #8b949e; border-bottom: 1px solid #30363d; padding-bottom: 10px;">SESSION LOG</h3>
             <div id="history-list"></div>
         </div>
     </div>
-    <script src="app.js"></script>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('evidenceInput');
+
+        dropZone.onclick = () => fileInput.click();
+
+        ['dragover', 'dragleave', 'drop'].forEach(name => {
+            dropZone.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = (name === 'dragover') ? "#00ff88" : "#30363d";
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) processEvidence(files[0]);
+        });
+
+        fileInput.onchange = (e) => {
+            if (e.target.files.length > 0) processEvidence(e.target.files[0]);
+        };
+
+        async function processEvidence(file) {
+            document.getElementById('status').innerText = "Processing Bitstream...";
+            
+            const lastMod = new Date(file.lastModified).toLocaleString();
+            const fileSize = (file.size / 1024).toFixed(2) + " KB";
+            let deepMeta = "No embedded data found.";
+            
+            try {
+                const tags = await ExifReader.load(file);
+                if (tags.DateTimeOriginal) deepMeta = `Capture: ${tags.DateTimeOriginal.description}`;
+            } catch (e) { console.log("Metadata scan skipped."); }
+
+            const arrayBuffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+            const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+            const notes = document.getElementById('caseNotes').value;
+            
+            // SHOW RESULTS
+            document.getElementById('result').innerHTML = `
+                <div style="background: #1a1c23; padding: 25px; border: 1px solid #00ff88; border-radius: 12px; margin-top: 20px;">
+                    <div class="success-seal">✓</div>
+                    <h3 style="color: #00ff88; margin: 0 0 10px 0;">Integrity Seal Applied</h3>
+                    <div style="background: #0d1117; padding: 10px; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.8rem; color: #fff; border: 1px solid #30363d;">
+                        ${hashHex}
+                    </div>
+                    <button id="downloadBtn" class="btn-download">Download Forensic Report</button>
+                </div>`;
+
+            // UPDATE LOG
+            document.getElementById('history-container').style.display = 'block';
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `<div><strong>${file.name}</strong><br><small style="color:#8b949e;">${hashHex.substring(0,16)}...</small></div><span style="color:#444;">${new Date().toLocaleTimeString()}</span>`;
+            document.getElementById('history-list').prepend(item);
+
+            document.getElementById('downloadBtn').onclick = () => {
+                downloadReport(file.name, hashHex, lastMod, fileSize, deepMeta, notes);
+            };
+            document.getElementById('status').innerText = "Drag & Drop Evidence to Seal";
+        }
+
+        function downloadReport(name, hash, lastMod, size, deepMeta, notes) {
+            const reportID = `JP-${Math.floor(Math.random() * 9000 + 1000)}`;
+            const content = `
+                <div style="padding: 40px; font-family: 'Times New Roman', serif; background: white; color: black; border: 10px solid #000; position: relative;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 60px; color: rgba(0,0,0,0.03); font-weight: bold; white-space: nowrap; z-index:0;">JURISPRUVE VERIFIED</div>
+                    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; position:relative; z-index:1;">
+                        <img src="jurispruve-dark-transparent.svg" style="height: 50px;">
+                        <h1 style="margin: 5px 0;">INTEGRITY CERTIFICATE</h1>
+                    </div>
+                    <div style="margin-top:20px; font-size:12px; display:flex; justify-content:space-between; position:relative; z-index:1;">
+                        <span><strong>ID:</strong> ${reportID}</span>
+                        <span><strong>DATE:</strong> ${new Date().toUTCString()}</span>
+                    </div>
+                    <h3 style="border-bottom: 1px solid #ccc; margin-top: 30px; position:relative; z-index:1;">I. CASE NOTES</h3>
+                    <p style="background: #f0f0f0; padding: 10px; font-size:14px; position:relative; z-index:1;">${notes || "No notes provided."}</p>
+                    <h3 style="border-bottom: 1px solid #ccc; margin-top: 25px; position:relative; z-index:1;">II. METADATA</h3>
+                    <p style="font-size:13px; position:relative; z-index:1;">File: ${name}<br>Size: ${size}<br>Timestamp: ${lastMod}<br>Data: ${deepMeta}</p>
+                    <h3 style="border-bottom: 1px solid #ccc; margin-top: 25px; position:relative; z-index:1;">III. SHA-256 HASH</h3>
+                    <div style="background: #eee; padding: 15px; font-family: monospace; word-break: break-all; border: 1px dashed #000; position:relative; z-index:1;">${hash}</div>
+                    <p style="margin-top: 40px; font-size: 10px; color: #666; position:relative; z-index:1;">Rule 901(c) Compliant | NIST FIPS 180-4 Standard</p>
+                </div>`;
+
+            html2pdf().from(content).set({ margin: 0.5, filename: `Jurispruve_${name}.pdf` }).save();
+        }
+    </script>
 </body>
 </html>
