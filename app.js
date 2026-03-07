@@ -33,14 +33,24 @@ async function processEvidence(file) {
 
     document.getElementById('downloadBtn').onclick = () => {
         const content = `
-            <div style="padding: 40px; font-family: serif; color: black;">
-                <h1>JURISPRUVE INTEGRITY REPORT</h1>
-                <p><strong>File:</strong> ${file.name}</p>
-                <p><strong>SHA-256:</strong> ${hashHex}</p>
-                <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-                <hr>
-                <p>Authenticated under FRE 901(c). This digital fingerprint confirms the file has not been altered.</p>
-            </div>`;
+    <div style="padding: 40px; border: 5px solid #00ff88; font-family: 'Times New Roman', serif;">
+        <h1 style="text-align: center;">JURISPRUVE | INTEGRITY CERTIFICATE</h1>
+        <p style="text-align: center; color: #666;">Verification Protocol v1.2</p>
+        <hr>
+        <h3>I. EVIDENCE SUMMARY</h3>
+        <p><strong>Primary Identifier:</strong> ${file.name}</p>
+        <p><strong>File Size:</strong> ${file.size} bytes</p>
+        <p><strong>Intake Timestamp:</strong> ${new Date().toUTCString()}</p>
+        
+        <h3>II. CRYPTOGRAPHIC PROOF</h3>
+        <p style="background: #f0f0f0; padding: 10px; font-family: monospace;">SHA-256: ${hashHex}</p>
+        
+        <h3>III. ADMISSIBILITY STATEMENT</h3>
+        <p>This document serves as an authentication record under <strong>FRE 901(c)</strong>. The hash above represents a unique digital fingerprint. Any alteration to the original file will result in a mismatch of this value.</p>
+        <br><br>
+        <p>__________________________</p>
+        <p>Attesting Officer</p>
+    </div>`;
         html2pdf().from(content).save(`Report_${file.name}.pdf`);
     };
 }
