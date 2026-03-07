@@ -6,22 +6,28 @@
     <title>Jurispruve | Evidence Intake</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { background-color: #0d1117; color: white; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding-top: 50px; }
-        #app { width: 400px; text-align: center; }
-        #drop-zone { border: 2px dashed #30363d; padding: 40px; border-radius: 12px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        .btn-download { background: #00ff88; color: black; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; }
+        body { background-color: #0d1117; color: white; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        #app { width: 500px; text-align: center; }
+        /* This is the box the JS is looking for */
+        #drop-zone { 
+            border: 2px dashed #30363d; 
+            padding: 60px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: all 0.3s;
+        }
+        #drop-zone.active { border-color: #00ff88; background: rgba(0, 255, 136, 0.1); }
+        .btn-download { background: #00ff88; color: black; border: none; padding: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div id="app">
-        <h1>Jurispruve</h1>
-        <p style="color: #8b949e;">Rule 901(c) Integrity Protocol</p>
-
+        <h1>Jurispruve <span style="color: #00ff88;">Integrity Protocol</span></h1>
         <div id="drop-zone">
             <p id="drop-text">Drag evidence here or <br><strong>click to browse</strong></p>
             <input type="file" id="evidenceInput" style="display: none;">
         </div>
-
         <div id="status" style="margin-top: 20px; color: #8b949e;">System Ready</div>
         <div id="result"></div>
     </div>
