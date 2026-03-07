@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurispruve | Evidence Integrity Portal</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #0a0c10;
+            --card: #161b22;
+            --text: #ffffff;
+            --dim: #8b949e;
+            --accent: #00ff88;
+            --border: #30363d;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        #jurispruve-box {
+            background: var(--card);
+            padding: 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 { margin-top: 0; font-weight: 600; }
+        p { color: var(--dim); font-size: 0.9rem; line-height: 1.5; }
+        
+        input[type="file"] {
+            margin: 20px 0;
+            color: var(--dim);
+        }
+
+        #status {
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-height: 1.2em;
+        }
+
+        #result { margin-top: 20px; }
+
+        .btn-download {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            transition: opacity 0.2s;
+        }
+        
+        .btn-download:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div id="jurispruve-box">
+        <h2>Evidence Intake</h2>
+        <p>Upload files to generate cryptographic fingerprints and <strong>Rule 901(c)</strong> admissibility reports.</p>
+        
+        <input type="file" id="evidenceInput">
+        
+        <div id="status"></div>
+        <div id="result"></div>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
